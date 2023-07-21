@@ -1,0 +1,214 @@
+<!doctype html>
+<html class="no-js" lang="en">
+	<script src="static/js/jquery-2.1.1.min.js"></script>
+	<script>
+		function addCinema() {
+			console.log("ajax_addCinema")
+			var cname = $("#cname").val()
+			var cbrand = $("#cbrand").val()
+			var caddress = $("#caddress").val()
+			var cstatus = $("#cstatus").val()
+			var clabel = $("#clabel").val()
+
+			if (cname != "" && cbrand != "" && caddress != "" && cstatus != "" && clabel != "") {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/cinema",
+					dataType: "json",
+					data: {
+						cname: cname,
+						brand: cbrand,
+						address: caddress,
+						status: cstatus,
+						label:'福建省'
+					},
+					type: "POST",
+					xhrFields: { //保存session在跨域访问中不会丢失！！！
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(result) {
+						console.log(result)
+						if (result.state == 0) {
+							alert("添加影院成功！")
+							location.href = "index2.html"
+						} else {
+							alert("添加影院失败！")
+						}
+					}
+				})
+			} else
+				alert("请检查您的添加项不为空！")
+		}
+	</script>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>后台管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/themify-icons.css">
+		<link rel="stylesheet" href="assets/css/metisMenu.css">
+		<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="assets/css/slicknav.min.css">
+		<!-- amchart css -->
+		<link rel="stylesheet" href="assets/css/export.css" type="text/css" media="all" />
+		<!-- others css -->
+		<link rel="stylesheet" href="assets/css/typography.css">
+		<link rel="stylesheet" href="assets/css/default-css.css">
+		<link rel="stylesheet" href="assets/css/styles.css">
+		<link rel="stylesheet" href="assets/css/responsive.css">
+		<link rel="stylesheet" href="assets/css/my.css">
+		<!-- modernizr css -->
+		<script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+	</head>
+
+	<body>
+		<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+		<!-- preloader area start -->
+		<div id="preloader">
+			<div class="loader"></div>
+		</div>
+		<!-- preloader area end -->
+		<!-- page container area start -->
+		<div class="page-container">
+			<!-- sidebar menu area start -->
+			<div class="sidebar-menu">
+				<div class="sidebar-header">
+					<div class="logo">
+						<a href="#"><img src="assets/images/icon/logo.png" alt="logo"></a>
+					</div>
+				</div>
+				<div class="main-menu">
+					<div class="menu-inner">
+						<nav>
+							<ul class="metismenu" id="menu">
+								<li class="active">
+									<a href="index2.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影院管理</span></a>
+									<ul class="collapse">
+										<li><a href="index2.html">影院列表</a></li>
+										<li class="active"><a>添加影院</a></li>
+										<li><a href="processedc.html">修改影院</a></li>
+										<li><a href="selectcinema.html">影院排片</a></li>
+
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="mlist.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影库管理</span></a>
+									<ul class="collapse">
+										<li><a href="mlist.html">全部影片</a></li>
+										<li><a href="addm.html">添加影片</a></li>
+										<li><a href="processedm.html">修改影片</a></li>
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="userlist.html" aria-expanded="true">
+										<i class="ti-dashboard"></i>
+										<span>用户管理</span></a>
+										<ul class="collapse">
+											<li><a href="userlist.html">用户列表</a></li>
+											<li><a href="processed.html">用户订单</a></li>
+										</ul>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<!-- sidebar menu area end -->
+			<!-- main content area start -->
+			<div class="main-content">
+				<!-- page title area start -->
+				<div class="page-title-area" style="border-radius: 20px">
+					<div class="row align-items-center">
+						<div class="col-sm-6">
+							<div class="breadcrumbs-area clearfix">
+								<h4 class="page-title pull-left" style="color:#6aacfb;font-weight: 500">添加影院</h4>
+							</div>
+						</div>
+						<div class="col-sm-6 clearfix">
+							<div class="user-profile pull-right" style="border-radius: 20px">
+								<img class="avatar user-thumb" src="assets/images/author/avatar.png" alt="avatar">
+								<h4 class="user-name dropdown-toggle" data-toggle="dropdown">i宇宙管理员 </h4>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- page title area end -->
+				<div class="main-content-inner">
+					<div class="row">
+						<div class="col-lg-6 col-ml-12">
+							<div class="row">
+								<!-- basic form start -->
+								<div class="col-12 mt-5">
+									<div class="card addc-card" .0>
+										<div class="card-body"
+											style="margin-top: 10px;margin-left: 170px;width: 580px;">
+											<h4 class="header-title" style="color: #17a2b8">输入影院信息</h4>
+											<div class="form-group">
+												<label for="cname">Name of Cinema</label>
+												<input type="text" class="form-control" id="cname" placeholder="影院名称">
+											</div>
+											<div class="form-group">
+												<label for="cbrand">Brand of Cinema</label>
+												<input type="text" class="form-control" id="cbrand" placeholder="影院品牌">
+											</div>
+											<div class="form-group">
+												<label for="caddress">Address of Cinema</label>
+												<input type="text" class="form-control" id="caddress"
+													placeholder="影院地址">
+											</div>
+											<div class="form-group">
+												<label for="cstatus">Status of Cinema</label>
+												<select name="nomal" class="form-control" id="cstatus" style="height: 44px;">
+													<option value="1">正常营业</option>
+													<option value="0">即将营业</option>
+												</select>
+											</div>
+											<button onclick="addCinema()"
+												class="btn btn-primary mt-4 pr-4 pl-4 addbutton">添加</button>
+										</div>
+									</div>
+								</div>
+								<!-- basic form end -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- main content area end -->
+			<!-- footer area start-->
+			<footer>
+				<div class="footer-area">
+					<div style="width: 80%;">
+						Copyright &copy; 2022.i universe company name all rights reserved
+					</div>
+				</div>
+			</footer>
+			<!-- footer area end-->
+		</div>
+		<!-- page container area end -->
+		<!-- jquery latest version -->
+		<script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+		<!-- bootstrap 4 js -->
+		<script src="assets/js/popper.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/owl.carousel.min.js"></script>
+		<script src="assets/js/metisMenu.min.js"></script>
+		<script src="assets/js/jquery.slimscroll.min.js"></script>
+		<script src="assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- others plugins -->
+		<script src="assets/js/plugins.js"></script>
+		<script src="assets/js/scripts.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,621 @@
+<!doctype html>
+<html class="no-js" lang="en">
+	<script src="assets/js/jquery-2.1.1.min.js"></script>
+<!--模态框-->
+		<script src="js/bootstrap.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="assets/css/imgupload.css">
+		<script>
+			//更新头像
+			    function uploadMovieImg(mid) {
+			        var avatarImg = $("#imgg").attr("src");
+					// var mid = $("#mid").val()
+			
+			//这里对base64串进行操作，去掉url头，并转换为byte
+			        var bytes = window.atob(avatarImg.split(',')[1]);
+			
+			//处理异常，将ASCII码小于0的转换为大于0
+			        var array = [];
+			        for (var i = 0; i < bytes.length; i++) {
+			            array.push(bytes.charCodeAt(i));
+			        }
+			        var blob = new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+			        var fd = new FormData();
+			        fd.append('file', blob, Date.now() + '.jpg');
+			
+			
+			        $.ajax({
+			            url: "http://www.zhelovechun.top:8081/tpm/movie/uploadMovieImgToQiNiu/"+mid,
+			            type: 'POST',
+			            // 告诉jQuery不要去处理发送的数据
+			            processData: false,
+			            // 告诉jQuery不要去设置Content-Type请求头
+			            contentType: false,
+			            /*dataType: 'json',*/
+			            // headers:{
+			            //     token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhdXRoMCIsImV4cCI6MTY1NTkwMDgwOSwidXNlcm5hbWUiOiJ6aGFuZ3NhbjMifQ.qp-DQXMrWCtTvI8_cdAUif9GS9E48HIR8QX9swrjJs4"
+			            // },
+			            data: fd,
+			
+			            xhrFields: {                               //保存session在跨域访问中不会丢失！！！
+			                withCredentials: true
+			            },
+			            crossDomain: true,
+			            beforeSend: function () {
+			                console.log("正在进行，请稍候");
+			            },
+			            success: function (result) {
+							console.log(result);
+			                if (result.state != 0) {
+			                    alert("海报上传异常，请稍后再试");
+			                } else {
+			                    alert("海报上传成功！");
+			                    //设置头像
+			                    $("#movieImg").html(
+										// "<span id='mimg' value='"+result.data+"' />	"+
+										"	<img  src='" + result.data+ "' alt='' />" 
+										);
+								
+			                    // location.reload();
+			                }
+							$("#mimg").val(result.data)
+			            },
+			            error: function (result) {
+			                console.log("error");
+			                location.reload();
+			            }
+			        });
+			    }
+		</script>
+	<script>
+		var page = 1
+		var flag = 1
+		var max = 100
+		var movie = []
+		$(document).ready(function(data) {
+			if (flag == 1) {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/movie",
+					dataType: "json",
+					type: "get",
+					xhrFields: {
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(data) {
+
+						// console.log(data.datas)
+						if (data.state == 0) {
+							movie = data.datas
+							// console.log(data)
+							var pages = Math.ceil(data.datas.length / 6)
+							// console.log(data.datas.length/6)
+							for (var i = 0; i < pages; i++) {
+								var str = '<li><a onclick="changePage(' + (i + 1) + ')">' + (i + 1) +
+									'</a></li>'
+								$("#addPage").append(str)
+							}
+							for (var i = 0; i < 6; i++) {
+								str = '\n' +
+									'<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].mid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' +"<image src='" +data.datas[i].img +"' style='height:70px'></image>"+ '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].mname + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].label + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].director + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].actor + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + mys(data.datas[i].rtime) + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].style + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].duration + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].money + '</td>\n' +
+									'<td class="context-td" style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].context + '</td>\n' +
+									'<td><button onclick="changemovies(' + data.datas[i].mid +
+									')" class="changebutton">修改</button><button onclick="changedel(' +
+									data.datas[i].mid +
+									')" class="changedelbutton">删除</button></td>\n' +
+									'</tr>';
+								$("#addMovie").append(str);
+							}
+						} else {
+							alert('出错了!')
+						}
+					}
+				})
+			}
+			flag++
+		})
+
+		function mys(time) {
+			var temp = time.split('T')
+			return temp[0]
+		}
+
+		function changePage(i) {
+			page = i
+			loadByPage()
+		}
+	</script>
+	<script>
+		function loadByPage() {
+			for (var i = 0; i < 6; i++) {
+				if (target = document.getElementById('item'))
+					target.parentNode.removeChild(target)
+			}
+			$.ajax({
+				url: "http://www.zhelovechun.top:8081/tpm/movie/" + page + '/6',
+				dataType: "json",
+				type: "get",
+				xhrFields: {
+					withCredentials: true
+				},
+				crossDomain: true,
+				success: function(data) {
+					
+					console.log(data)
+					if (data.state == 0) {
+						console.log(data)
+						for (var i = 0; i < 6; i++) {
+							str = '\n' +
+								'<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].mid + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' +"<image src='" +data.datas[i].img +"' style='height:70px'></image>"+ '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].mname + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].label + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].director + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].actor + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + mys(data.datas[i].rtime) + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].style + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].duration + '</td>\n' +
+								'<td style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].money + '</td>\n' +
+								'<td class="context-td" style="color: #073a41;background-color:#F5F8F9;width: 40px;">' + data.datas[i].context + '</td>\n' +
+								'<td><button onclick="changemovies(' + data.datas[i].mid +
+								')" class="changebutton">修改</button><button onclick="changedel(' +
+								data.datas[i].mid +
+								')" class="changedelbutton">删除</button></td>\n' +
+								'</tr>';
+							$("#addMovie").append(str);
+						}
+					}
+				}
+			})
+		}
+
+		function reduce() {
+			if (page > 1) {
+				--page
+				loadByPage()
+			} else
+				alert("已经是第一页了！")
+
+		}
+
+		function nextPage() {
+			if (page < max) {
+				++page
+				loadByPage()
+			} else
+				alert("已经是最后一页了！")
+
+		}
+	</script>
+	<script>
+		var item = ''
+
+		function changemovies(mid) {
+			for (var i = 0; i < movie.length; i++) {
+				if (movie[i].mid == mid)
+					item = movie[i]
+			}
+			var time = item.rtime.replace('/','-').substring(0,10)
+			document.getElementById('mname').value = item.mname
+			document.getElementById('mlabel').value = item.label
+			document.getElementById('mdirector').value = item.director
+			document.getElementById('mactor').value = item.actor
+			document.getElementById('mrtime').value = time
+			document.getElementById('mstyle').value = item.style
+			document.getElementById('mduration').value = item.duration
+			document.getElementById('mmoney').value = item.money
+			document.getElementById('mcontext').value = item.context
+			// document.getElementById('upmid').value = item.mid
+			$("#upimg").html("<button class=\"btn btn-default\" data-dismiss=\"modal\">关闭</button>"+
+		                     "<button class=\"btn btn-primary\" onclick=\"uploadMovieImg("+item.mid+")\">提交</button>")
+			document.querySelector('.main_pop').classList.toggle('active')
+		}
+	</script>
+	<script>
+		function changeMovies(mid) {
+			var mname = document.getElementById('mname').value
+			var label = document.getElementById('mlabel').value
+			var director = document.getElementById('mdirector').value
+			var actor = document.getElementById('mactor').value
+			var rtime = document.getElementById('mrtime').value
+			var style = document.getElementById('mstyle').value
+			var duration = document.getElementById('mduration').value
+			var money = document.getElementById('mmoney').value
+			var context = document.getElementById('mcontext').value
+			var img = $("#mimg").val()
+			
+			$.ajax({
+				url: "http://www.zhelovechun.top:8081/tpm/movie",
+				dataType: "json",
+				type: "PUT",
+				xhrFields: {
+					withCredentials: true
+				},
+				data: {
+					mid: mid,
+					mname: mname,
+					label: label,
+					director: director,
+					actor: actor,
+					rtime: rtime,
+					style: style,
+					duration: duration,
+					money: money,
+					context: context,
+					// score: score,
+					img: img,
+					status: 1
+				},
+				crossDomain: true,
+				success: function(data) {
+					console.log(data)
+					if (data.state == 0) {
+						alert(' 修改成功!')
+						loadByPage()
+					} else {
+						alert('修改失败!')
+					}
+				} //success
+			}) //ajax
+			// loadByPage()
+		}
+
+		function changedel(mid) {
+			alert(mid)
+			if (confirm("是否要删除该影片？")) {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/movie/"+mid,
+					dataType: "json",
+					type: "DELETE",
+					xhrFields: {
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(data) {
+						console.log(data)
+						if (data.state == 0) {
+							alert('删除成功!')
+							target = document.getElementById('item')
+							target.parentNode.removeChild(target)
+							loadByPage()
+							window.location.href="processedm.html"
+						} else {
+							
+							alert('删除失败!')
+						}
+					} //success
+				}) //ajax
+			}
+		}
+	</script>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>后台管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/themify-icons.css">
+		<link rel="stylesheet" href="assets/css/metisMenu.css">
+		<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="assets/css/slicknav.min.css">
+		<!-- amchart css -->
+		<link rel="stylesheet" href="assets/css/export.css" type="text/css" media="all" />
+		<!-- others css -->
+		<link rel="stylesheet" href="assets/css/typography.css">
+		<link rel="stylesheet" href="assets/css/default-css.css">
+		<link rel="stylesheet" href="assets/css/styles.css">
+		<link rel="stylesheet" href="assets/css/responsive.css">
+		<link rel="stylesheet" href="assets/css/my.css">
+		<!-- modernizr css -->
+		<script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+	</head>
+
+	<body>
+		<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+		<!-- preloader area start -->
+		<div id="preloader">
+			<div class="loader"></div>
+		</div>
+		<!-- preloader area end -->
+		<!-- page container area start -->
+		<div class="page-container">
+			<!-- sidebar menu area start -->
+			<div class="sidebar-menu">
+				<div class="sidebar-header">
+					<div class="logo">
+						<a href="#"><img src="assets/images/icon/logo.png" alt="logo"></a>
+					</div>
+				</div>
+				<div class="main-menu">
+					<div class="menu-inner">
+						<nav>
+							<ul class="metismenu" id="menu">
+								<li class="active">
+									<a href="index2.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影院管理</span></a>
+									<ul class="collapse">
+										<li><a href="index2.html">影院列表</a></li>
+										<li><a href="addc.html">添加影院</a></li>
+										<li><a href="processedc.html">修改影院</a></li>
+										<li><a href="selectcinema.html">影院排片</a></li>
+
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="mlist.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影库管理</span></a>
+									<ul class="collapse">
+										<li><a href="mlist.html">全部影片</a></li>
+										<li><a href="addm.html">添加影片</a></li>
+										<li class="active"><a>修改影片</a></li>
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="userlist.html" aria-expanded="true">
+										<i class="ti-dashboard"></i>
+										<span>用户管理</span></a>
+										<ul class="collapse">
+											<li><a href="userlist.html">用户列表</a></li>
+											<li><a href="processed.html">用户订单</a></li>
+										</ul>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<!-- sidebar menu area end -->
+			<!-- main content area start -->
+			<div class="main-content">
+				<!-- header area start -->
+				<!-- header area end -->
+				<!-- page title area start -->
+				<div class="page-title-area" style="border-radius: 20px">
+					<div class="row align-items-center">
+						<div class="col-sm-6">
+							<div class="breadcrumbs-area clearfix">
+								<h4 class="page-title pull-left" style="color:#6aacfb;font-weight: 500">影片列表</h4>
+							</div>
+						</div>
+						<div class="col-sm-6 clearfix">
+							<div class="user-profile pull-right" style="border-radius: 20px">
+								<img class="avatar user-thumb" src="assets/images/author/avatar.png" alt="avatar">
+								<h4 class="user-name dropdown-toggle" data-toggle="dropdown">i宇宙管理员 </h4>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- page title area end -->
+
+				<!-- sales report area end -->
+				<!-- visitor graph area start -->
+
+				<!-- visitor graph area end -->
+				<!-- order list area start -->
+				<div class="card mt-5" style="margin: 0px 0px;border-radius: 40px;width: 100%;">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="dbkit-table list-td">
+								<tbody>
+									<tr class="heading-td" style="border-radius: 20px;background-color: white;">
+										<td>影片编号</td>
+										<td>影片海报</td>
+										<td>影片名称</td>
+										<td>影片分类</td>
+										<td>导演名称</td>
+										<td>主要演员</td>
+										<td>上映时间</td>
+										<td>放映厅类型</td>
+										<td>影片时长</td>
+										<td>影片价格</td>
+										<td>影片简介</td>
+										<td>功能操作</td>
+									</tr>
+								</tbody>
+								<tbody id="addMovie"></tbody>
+							</table>
+						</div>
+						<div class="pagination_area pull-right mt-5">
+							<ul>
+								<ul>
+									<li id="addPage"><a onclick="reduce()" href="#" style="margin: 0px 0px -45px -50px;"><i
+												class="fa fa-chevron-left"></i></a></li>
+									<li id="addPage"><a onclick="nextPage()" href="#"><i
+												class="fa fa-chevron-right"></i></a></li>
+								</ul>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- order list area end -->
+
+			</div>
+		</div>
+
+		<div class="main_pop">
+			<div class="pop">
+				<div class="card-screen" style="margin: -150px 10px 0px 10px;width: 900px;height: 710px;">
+					<div class="card-body" style="margin-top: 10px;margin-left: 20px;width: 355px;height: 710px;">
+						<h4 class="header-title" style="color: #17a2b8;width: 280px;font-size: 20px;">修改影片</h4>
+						<div class="form-group">
+							<label for="mname">影片名称</label>
+							<input type="text" class="form-control" id="mname">
+						</div>
+						<div class="form-group">
+							<label for="mlabel">影片标签</label>
+							<input type="text" class="form-control" id="mlabel">
+						</div>
+						<div class="form-group">
+							<label for="mdirector">导演名称</label>
+							<input type="text" class="form-control" id="mdirector">
+						</div>
+						<div class="form-group">
+							<label for="mactor">主要演员</label>
+							<input type="text" class="form-control" id="mactor">
+						</div>
+						<div class="form-group">
+							<label for="mmimg">影片海报</label>
+							
+							<!-- <input type="button" class="form-control" id="mimg" placeholder="上传海报"> -->
+							<button type="submit" class="thm-btn" href="#mymodal" data-toggle='modal'>Upload</button>
+							<div id = "movieImg" style="width: 40%;"></div>
+							<span id="mimg" val="" hidden />
+						</div>
+						<div>
+						    <button onclick="changeMovies(item.mid)"
+							class="btn btn-primary mt-4 pr-4 pl-4 mybuttonStatus mybuttonchange">修&nbsp;&nbsp;改</button>
+						</div>
+						<div class="card-body" style="margin-top:-550px;margin-left: 400px;width: 355px;">
+						<div class="form-group">
+							<label for="mrtime">上映时间</label>
+							<input type="date" class="form-control" id="mrtime">
+						</div>
+						<div class="form-group">
+							<label for="mstyle">放映厅类型</label>
+							<select name="hall" class="form-control" id="mstyle"
+								style="height: 44px;">
+								<option value="IMAX厅">IMAX厅</option>
+								<option value="CINITY厅">CINITY厅</option>
+								<option value="杜比影院">杜比影院</option>
+								<option value="MX4D">MX4D</option>
+								<option value="VIP厅">VIP厅</option>
+								<option value="3D IMAX">3D IMAX</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="mduration">影片时长</label>
+							<input type="number" class="form-control" id="mduration">
+						</div>
+						<div class="form-group">
+							<label for="money">建议价格</label>
+							<input type="text" class="form-control" id="mmoney">
+						</div>
+						<div class="form-group">
+							<label for="mcontext">影片简介</label>
+							<textarea type="area" aria-owns="4" class="form-control" id="mcontext"></textarea>
+						</div>
+						</div>
+					</div>
+				</div>
+				<span onclick="changemovies()" style="font-size: 26px;margin-top: -100px;">x</span>
+			</div>
+		</div>
+		<!-- main content area end -->
+		<div id="mymodal" class="modal fade">
+		        <!--相对定位，自适应宽高-->
+		        <!--当分辨率大于768px时，宽度为600px-->
+		
+		        <div class="modal-dialog" style="display: inline-block;left: 300px">
+		            <div class="modal-content" style="align-content: center;width: 910px">
+		                <div id="_modalDialog_body" class="modal-body">
+		                    <!--Tz_box start-->
+		                    <div id="Tz_box">
+		                        <input type="file" id="input" size="10" style="visibility:hidden;">
+		                        <canvas id="Tz_wrap"></canvas>
+		                        <p class="ptit">请拖拽图片至此区域</p>
+		                        <!--btnbox start-->
+		                        <div class="btnbox">
+		                            <div id="rotateLeftBtn">↶<span>左旋转</span></div>
+		                            <div id="rotateRightBtn">↷<span>左旋转</span></div>
+		                            <div id="upload">⇧<span>上传图片</span></div>
+		                            <div id="send">➥<span>确认发送</span></div>
+		                        </div>
+		                        <!--btnbox end-->
+		                        <!--showbox start-->
+		                        <div class="showbox">
+		                            <canvas id="preview180" class="preview"></canvas>
+		                            <span class="tit">图片预览:158*158</span>
+		                            <!--此处会填充src-->
+		                            <div class="prev"><img src="" alt="" id="imgg"></div>
+		                            <span class="tit">生成图片可右键保存到本地</span>
+		                        </div>
+		                        <!--show box end-->
+		                    </div>
+		                </div>
+		                <div class="modal-footer" id="upimg">
+		                    <!-- <button class="btn btn-default" data-dismiss="modal">关闭</button> -->
+		                    <!-- <button class="btn btn-primary" onclick="updateavatar()">提交</button> -->
+		                </div>
+		
+		            </div>
+		        </div>
+		    </div>
+		
+		            
+		      
+		<!-- footer area start-->
+		
+		<!-- footer area start-->
+		<footer>
+			<div class="footer-area">
+				<div style="width: 100%;">
+					Copyright &copy; 2022.i universe company name all rights reserved
+				</div>
+			</div>
+		</footer>
+		<!-- footer area end-->
+		</div>
+		<!-- page container area end -->
+		<!-- offset area start -->
+		<div class="offset-area">
+			<div class="offset-close"><i class="ti-close"></i></div>
+			<ul class="nav offset-menu-tab">
+				<li><a class="active" data-toggle="tab" href="#activity">Activity</a></li>
+				<li><a data-toggle="tab" href="#settings">Settings</a></li>
+			</ul>
+		</div>
+		<!-- offset area end -->
+		<!-- jquery latest version -->
+		<script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+		<!-- bootstrap 4 js -->
+		<script src="assets/js/popper.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/owl.carousel.min.js"></script>
+		<script src="assets/js/metisMenu.min.js"></script>
+		<script src="assets/js/jquery.slimscroll.min.js"></script>
+		<script src="assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- start chart js -->
+		<script src="assets/js/Chart.min.js"></script>
+		<!-- start highcharts js -->
+		<script src="assets/js/highcharts.js"></script>
+		<!-- start zingchart js -->
+		<script src="assets/js/zingchart.min.js"></script>
+		<script>
+			zingchart.MODULESDIR = "assets/js/modules/";
+			ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
+		</script>
+		<!-- all line chart activation -->
+		<script src="assets/js/line-chart.js"></script>
+		<!-- all bar chart activation -->
+		<script src="assets/js/bar-chart.js"></script>
+		<!-- all pie chart -->
+		<script src="assets/js/pie-chart.js"></script>
+		<!-- others plugins -->
+		<script src="assets/js/plugins.js"></script>
+		<script src="assets/js/scripts.js"></script>
+		<!--Tz_box end-->
+		<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="assets/js/imagecropper.js"></script>
+		<script type="text/javascript" src="assets/js/imgupload.js"></script>
+		<!-- <script type="text/javascript" src="assets/js/hit.js"></script> -->
+	</body>
+
+</html>

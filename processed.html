@@ -1,0 +1,469 @@
+<!doctype html>
+<html class="no-js" lang="en">
+	<script src="assets/js/jquery-2.1.1.min.js"></script>
+	<script>
+		var page = 1
+		var flag = 1
+		var max = 100
+		var ticket = []
+		$(document).ready(function(data) {
+			// alert("ajax_getUserlist");
+			if (flag == 1) {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/ticket",
+					dataType: "json",
+					type: "get",
+					xhrFields: {
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(data) {
+						console.log(data)
+						if (data.state == 0) {
+							// console.log(data.datas.length)
+							// ticket = data.datas
+							var pages = Math.ceil(data.datas.length / 6)
+							// console.log(data.datas.length/6)
+							for (var i = 0; i < pages; i++) {
+								var str = '<li><a onclick="changePage(' + (i + 1) + ')">' + (i + 1) +
+									'</a></li>'
+								$("#addPage").append(str)
+							}
+							for (var i = 0; i < 6; i++) {
+								var str = ""
+								if (data.datas[i].status == 0) {
+									str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime)+ '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+										'<td style="color:#db4619;background-color:#F5F8F9;">未付款</td>\n' +
+										'<td><button onclick="changedel(' + data.datas[i].tid +
+										')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+										'</tr>'
+								} else if(data.datas[i].status == 1){
+									str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+										'<td style="color:#25db18;background-color:#F5F8F9;">已出票</td>\n' +
+										'<td><button onclick="changedel(' + data.datas[i].tid +
+										')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+										'</tr>'
+								}else if(data.datas[i].status == 2){
+									str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+										'<td style="color:#139fdb;background-color:#F5F8F9;">待评分</td>\n' +
+										'<td><button onclick="changedel(' + data.datas[i].tid +
+										')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+										'</tr>'
+									}else{
+									str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+										'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+										'<td style="color:#25db18;background-color:#F5F8F9;">已评分</td>\n' +
+										'<td><button onclick="changedel(' + data.datas[i].tid +
+										')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+										'</tr>'
+										}
+
+								$("#addUser").append(str);
+							}
+
+						} else {
+							alert('出错了!')
+						}
+					} //success
+				}) //ajax
+			}
+			flag++
+		})
+		function mys(time){
+			var temp = time.split('T')
+			return temp[0]
+		}
+
+		function changePage(i) {
+			page = i
+			loadByPage()
+		}
+	</script>
+
+	<script>
+		function loadByPage() {
+			for (var i = 0; i < 6; i++) {
+				if (target = document.getElementById('item'))
+					target.parentNode.removeChild(target)
+			}
+			$.ajax({
+				url: "http://www.zhelovechun.top:8081/tpm/ticket/" + page + '/6',
+				dataType: "json",
+				type: "get",
+				xhrFields: {
+					withCredentials: true
+				},
+				crossDomain: true,
+				success: function(data) {
+					console.log(data)
+					if (data.state == 0) {
+						for (var i = 0; i < 6; i++) {
+							var str = ""
+							if (data.datas[i].status == 0) {
+								str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime)+ '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+									'<td style="color:#db4619;background-color:#F5F8F9;">未付款</td>\n' +
+									'<td><button onclick="changedel(' + data.datas[i].tid +
+									')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+									'</tr>'
+							} else if(data.datas[i].status == 1){
+								str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+									'<td style="color:#25db18;background-color:#F5F8F9;">已出票</td>\n' +
+									'<td><button onclick="changedel(' + data.datas[i].tid +
+									')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+									'</tr>'
+							}else if(data.datas[i].status == 2){
+								str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+									'<td style="color:#139fdb;background-color:#F5F8F9;">待评分</td>\n' +
+									'<td><button onclick="changedel(' + data.datas[i].tid +
+									')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+									'</tr>'
+								}else{
+								str = '<tr class="heading-td" style="border-radius: 20px" id="item">\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].tid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].uid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].mid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].cid + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + mys(data.datas[i].ordertime) + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseatids + '</td>\n' +
+									'<td style="color: #073a41;background-color:#F5F8F9;">' + data.datas[i].sessionseats + '</td>\n' +
+									'<td style="color:#25db18;background-color:#F5F8F9;">已评分</td>\n' +
+									'<td><button onclick="changedel(' + data.datas[i].tid +
+									')" class="changedelbutton" style="width:120px">删&nbsp;除</button></td>\n' +
+									'</tr>'
+									}
+				
+							$("#addUser").append(str);
+						}
+					} 
+				} //success
+			}) //ajax
+		}
+
+		function reduce() {
+			if (page > 1) {
+				--page
+				loadByPage()
+			} else
+				alert("已经是第一页了！")
+		}
+
+		function nextPage() {
+			if (page < max) {
+				++page
+				loadByPage()
+			} else
+				alert("已经是最后一页了！")
+		}
+	</script>
+
+	<script>
+		function changedel(tid) {
+			if (confirm("是否要删除该订单？")) {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/ticket/" + tid,
+					dataType: "json",
+					type: "DELETE",
+					xhrFields: {
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(data) {
+						console.log(data)
+						if (data.state == 0) {
+							alert('删除成功!')
+							target = document.getElementById('item')
+							target.parentNode.removeChild(target)
+							loadByPage()
+						} else {
+							alert('删除失败!')
+						}
+					} //success
+				}) //ajax
+			}
+		}
+	</script>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>后台管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/themify-icons.css">
+		<link rel="stylesheet" href="assets/css/metisMenu.css">
+		<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="assets/css/slicknav.min.css">
+		<!-- amchart css -->
+		<link rel="stylesheet" href="assets/css/export.css" type="text/css" media="all" />
+		<!-- others css -->
+		<link rel="stylesheet" href="assets/css/typography.css">
+		<link rel="stylesheet" href="assets/css/default-css.css">
+		<link rel="stylesheet" href="assets/css/styles.css">
+		<link rel="stylesheet" href="assets/css/responsive.css">
+		<link rel="stylesheet" href="assets/css/my.css">
+		<!-- modernizr css -->
+		<script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+	</head>
+
+	<body>
+		<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+		<!-- preloader area start -->
+		<div id="preloader">
+			<div class="loader"></div>
+		</div>
+		<!-- preloader area end -->
+		<!-- page container area start -->
+		<div class="page-container">
+			<!-- sidebar menu area start -->
+			<div class="sidebar-menu">
+				<div class="sidebar-header">
+					<div class="logo">
+						<a href="#"><img src="assets/images/icon/logo.png" alt="logo"></a>
+					</div>
+				</div>
+				<div class="main-menu">
+					<div class="menu-inner">
+						<nav>
+							<ul class="metismenu" id="menu">
+								<li class="active">
+									<a href="index2.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影院管理</span></a>
+									<ul class="collapse">
+										<li><a href="index2.html">影院列表</a></li>
+										<li><a href="addc.html">添加影院</a></li>
+										<li><a href="processedc.html">修改影院</a></li>
+										<li><a href="selectcinema.html">影院排片</a></li>
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="mlist.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影库管理</span></a>
+									<ul class="collapse">
+										<li><a href="mlist.html">全部影片</a></li>
+										<li><a href="addm.html">添加影片</a></li>
+										<li><a href="processedm.html">修改影片</a></li>
+									</ul>
+								</li>
+								<li class="active">
+									<a href="userlist.html" aria-expanded="true">
+										<i class="ti-dashboard"></i>
+										<span>用户管理</span></a>
+										<ul class="collapse">
+											<li><a href="userlist.html">用户列表</a></li>
+											<li class="active"><a>用户订单</a></li>
+										</ul>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<!-- sidebar menu area end -->
+			<!-- main content area start -->
+			<div class="main-content">
+				<!-- header area start -->
+				<!-- header area end -->
+				<!-- page title area start -->
+				<div class="page-title-area" style="border-radius: 20px">
+					<div class="row align-items-center">
+						<div class="col-sm-6">
+							<div class="breadcrumbs-area clearfix">
+								<h4 class="page-title pull-left" style="color:#6aacfb;font-weight: 500">影片列表</h4>
+							</div>
+						</div>
+						<div class="col-sm-6 clearfix">
+							<div class="user-profile pull-right" style="border-radius: 20px">
+								<img class="avatar user-thumb" src="assets/images/author/avatar.png" alt="avatar">
+								<h4 class="user-name dropdown-toggle" data-toggle="dropdown">i宇宙管理员 </h4>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- page title area end -->
+
+				<!-- sales report area end -->
+				<!-- visitor graph area start -->
+
+				<!-- visitor graph area end -->
+				<!-- order list area start -->
+				<div class="card mt-5" style="margin: 0px 40px;border-radius: 40px">
+					<div class="card-body">
+						<!--                <h4 class="header-title">////</h4>-->
+						<div class="table-responsive">
+							<table class="dbkit-table list-td">
+								<tbody>
+									<tr class="heading-td" style="border-radius: 20px;background-color: white;">
+										<td>订单编号</td>
+										<td>用户编号</td>
+										<td>影片编号</td>
+										<td>影院编号</td>
+										<td>下单时间</td>
+										<td>场次编号</td>
+										<td>座位编号</td>
+										<td>票单状态</td>
+										<td>功能操作</td>
+									</tr>
+									</tr>
+								</tbody>
+								<tbody id="addUser"></tbody>
+							</table>
+						</div>
+						<div class="pagination_area pull-right mt-5">
+							<ul>
+								<li id="addPage"><a onclick="reduce()" href="#" style="margin: 0px 0px -45px -50px;"><i class="fa fa-chevron-left"></i></a></li>
+								<li id="addPage"><a onclick="nextPage()" href="#"><i class="fa fa-chevron-right"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- order list area end -->
+
+			</div>
+		</div>
+		<div class="main_pop">
+			<div class="pop">
+				<div class="card-screen" style="margin: -68px 10px 0px 100px;">
+					<div class="card-body" style="margin-top: 10px;margin-left: 20px;width: 355px;">
+						<h4 class="header-title" style="color: #17a2b8;margin-left: 15px;width: 280px;">修改影院</h4>
+						<div class="form-group">
+							<label for="mid">影片编号</label>
+							<input type="text" class="form-control" id="mid" value="">
+						</div>
+						<div class="form-group">
+							<label for="cid">影院编号</label>
+							<input type="text" class="form-control" id="cid" value="">
+						</div>
+						<div class="form-group">
+							<label for="ordertime">下单时间</label>
+							<input type="text" class="form-control" id="ordertime" value="">
+						</div>
+						<div class="form-group">
+							<label for="sessionseatids">场次编号</label>
+							<input type="text" class="form-control" id="sessionseatids" value="">
+						</div>
+						<div class="form-group">
+							<label for="sessionseats">座位编号</label>
+							<input type="text" class="form-control" id="sessionseats" value="">
+						</div>
+						<div class="form-group">
+							<label for="status">票单状态</label>
+							<select name="nomal" class="form-control" id="status" value="" style="height: 44px;">
+								<option value="0">未支付</option>
+								<option value="1">已支付</option>
+								<option value="2">未评价</option>
+								<option value="3">已评价</option>
+							</select>
+						</div>
+						<button onclick="changeTicket(item.tid)"
+							class="btn btn-primary mt-4 pr-4 pl-4 mybuttonStatus">修改</button>
+					</div>
+				</div>
+				<span onclick="changeticket()" style="font-size: 26px;">x</span>
+			</div>
+		</div>
+
+		<!-- main content area end -->
+		<!-- footer area start-->
+		<footer>
+			<div class="footer-area">
+				<div style="width: 100%;">
+					Copyright &copy; 2022.i universe company name all rights reserved
+				</div>
+			</div>
+		</footer>
+		<!-- footer area end-->
+		</div>
+		<!-- page container area end -->
+		<!-- offset area start -->
+		<div class="offset-area">
+			<div class="offset-close"><i class="ti-close"></i></div>
+			<ul class="nav offset-menu-tab">
+				<li><a class="active" data-toggle="tab" href="#activity">Activity</a></li>
+				<li><a data-toggle="tab" href="#settings">Settings</a></li>
+			</ul>
+		</div>
+		<!-- offset area end -->
+		<!-- jquery latest version -->
+		<script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+		<!-- bootstrap 4 js -->
+		<script src="assets/js/popper.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/owl.carousel.min.js"></script>
+		<script src="assets/js/metisMenu.min.js"></script>
+		<script src="assets/js/jquery.slimscroll.min.js"></script>
+		<script src="assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- start chart js -->
+		<script src="assets/js/Chart.min.js"></script>
+		<!-- start highcharts js -->
+		<script src="assets/js/highcharts.js"></script>
+		<!-- start zingchart js -->
+		<script src="assets/js/zingchart.min.js"></script>
+		<script>
+			zingchart.MODULESDIR = "assets/js/modules/";
+			ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "ee6b7db5b51705a13dc2339db3edaf6d"];
+		</script>
+		<!-- all line chart activation -->
+		<script src="assets/js/line-chart.js"></script>
+		<!-- all bar chart activation -->
+		<script src="assets/js/bar-chart.js"></script>
+		<!-- all pie chart -->
+		<script src="assets/js/pie-chart.js"></script>
+		<!-- others plugins -->
+		<script src="assets/js/plugins.js"></script>
+		<script src="assets/js/scripts.js"></script>
+	</body>
+
+</html>

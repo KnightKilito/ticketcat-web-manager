@@ -1,0 +1,257 @@
+<!doctype html>
+<html class="no-js" lang="en">
+	<script src="static/js/jquery-2.1.1.min.js"></script>
+	<script>
+		function addMovie() {
+			console.log("ajax_addMoive")
+			var mname = $("#mname").val()
+			var mlabel = $("#mlabel").val()
+			var mdirector = $("#mdirector").val()
+			var mactor = $("#mactor").val()
+			var mrtime = $("#mrtime").val()
+			var mduration = $("#mduration").val()
+			var mmoney = $("#mmoney").val()
+			var mstyle = $("#mstyle").val()
+			var mcontext = $("#mcontext").val()
+			var mimg = $("#mimg").val()
+
+			if (mimg != "" &&mname != "" && mlabel != "" && mdirector != "" && mactor != "" && mrtime != "" && mmoney != "" && mduration !=
+				"" && mstyle != "" && mcontext != "") {
+				$.ajax({
+					url: "http://www.zhelovechun.top:8081/tpm/movie",
+					dataType: "json",
+					type: "POST",
+					data: {
+						mname: mname,
+						label: mlabel,
+						director: mdirector,
+						actor: mactor,
+						rtime: mrtime,
+						duration: mduration,
+						money: mmoney,
+						score: 9,
+						style: mstyle,
+						context: mcontext,
+						img:mimg
+					},
+					
+					xhrFields: { //保存session在跨域访问中不会丢失！！！
+						withCredentials: true
+					},
+					crossDomain: true,
+					success: function(result) {
+						console.log(result)
+						if (result.state == 0) {
+							alert("添加影片成功！");
+							window.location.href = "mlist.html";
+						} else {
+							alert("添加影片失败！");
+							window.location.href = "mlist.html";
+						}
+					}
+				})
+			} else
+				alert("请检查您的添加项不为空！")
+		}
+	</script>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>后台管理</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/themify-icons.css">
+		<link rel="stylesheet" href="assets/css/metisMenu.css">
+		<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+		<link rel="stylesheet" href="assets/css/slicknav.min.css">
+		<!-- amchart css -->
+		<link rel="stylesheet" href="assets/css/export.css" type="text/css" media="all" />
+		<!-- others css -->
+		<link rel="stylesheet" href="assets/css/typography.css">
+		<link rel="stylesheet" href="assets/css/default-css.css">
+		<link rel="stylesheet" href="assets/css/styles.css">
+		<link rel="stylesheet" href="assets/css/responsive.css">
+		<link rel="stylesheet" href="assets/css/my.css">
+		<!-- modernizr css -->
+		<script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+		
+	</head>
+
+	<body>
+		<!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+		<!-- preloader area start -->
+		<div id="preloader">
+			<div class="loader"></div>
+		</div>
+		<!-- preloader area end -->
+		<!-- page container area start -->
+		<div class="page-container">
+			<!-- sidebar menu area start -->
+			<div class="sidebar-menu">
+				<div class="sidebar-header">
+					<div class="logo">
+						<a href="#"><img src="assets/images/icon/logo.png" alt="logo"></a>
+					</div>
+				</div>
+				<div class="main-menu">
+					<div class="menu-inner">
+						<nav>
+							<ul class="metismenu" id="menu">
+								<li class="active">
+									<a href="index2.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影院管理</span></a>
+									<ul class="collapse">
+										<li><a href="index2.html">影院列表</a></li>
+										<li><a href="addc.html">添加影院</a></li>
+										<li><a href="processedc.html">修改影院</a></li>
+										<li><a href="selectcinema.html">影院排片</a></li>
+
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="mlist.html" aria-expanded="true"><i
+											class="ti-dashboard"></i><span>影库管理</span></a>
+									<ul class="collapse">
+										<li><a href="mlist.html">全部影片</a></li>
+										<li class="active"><a>添加影片</a></li>
+										<li><a href="processedm.html">修改影片</a></li>
+									</ul>
+								</li>
+
+								<li class="active">
+									<a href="userlist.html" aria-expanded="true">
+										<i class="ti-dashboard"></i>
+										<span>用户管理</span></a>
+										<ul class="collapse">
+											<li><a href="userlist.html">用户列表</a></li>
+											<li><a href="processed.html">用户订单</a></li>
+										</ul>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<!-- sidebar menu area end -->
+			<!-- main content area start -->
+			<div class="main-content">
+				<!-- page title area start -->
+				<div class="page-title-area" style="border-radius: 20px">
+					<div class="row align-items-center">
+						<div class="col-sm-6">
+							<div class="breadcrumbs-area clearfix">
+								<h4 class="page-title pull-left" style="color:#6aacfb;font-weight: 500">添加影片</h4>
+							</div>
+						</div>
+						<div class="col-sm-6 clearfix">
+							<div class="user-profile pull-right" style="border-radius: 20px">
+								<img class="avatar user-thumb" src="assets/images/author/avatar.png" alt="avatar">
+								<h4 class="user-name dropdown-toggle" data-toggle="dropdown">i宇宙管理员 </h4>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- page title area end -->
+				<div class="main-content-inner">
+					<div class="row">
+						<div class="col-lg-6 col-ml-12">
+							<div class="row">
+								<!-- basic form start -->
+								<div class="col-12 mt-5">
+									<div class="card addm-card">
+										<div class="card-body addm-card-body">
+											<h4 class="header-title" style="color: #17a2b8">输入影片信息</h4>
+											
+											<div class="form-group">
+												<label for="mname">Movie name</label>
+												<input type="text" class="form-control" id="mname" placeholder="影片名称">
+											</div>
+											
+											<div class="form-group">
+												<label for="mlabel">Movie label</label>
+												<input type="text" class="form-control" id="mlabel" placeholder="影片标签">
+											</div>
+											<div class="form-group">
+												<label for="mdirector">Movie director</label>
+												<input type="text" class="form-control" id="mdirector" placeholder="导演名称">
+											</div>
+											<div class="form-group">
+												<label for="mactor">Movie actor</label>
+												<input type="text" class="form-control" id="mactor" placeholder="主要演员">
+											</div>
+											<div class="form-group">
+												<label for="mrtime">Release time</label>
+												<input type="date" class="form-control" id="mrtime" placeholder="上映时间">
+											</div>
+											<div class="form-group">
+												<label for="mstyle">Projection Hall</label>
+												<select name="hall" class="form-control" id="mstyle" placeholder="放映厅类型"
+													style="height: 44px;">
+													<option value="IMAX厅">IMAX厅</option>
+													<option value="CINITY厅">CINITY厅</option>
+													<option value="杜比影院">杜比影院</option>
+													<option value="MX4D">MX4D</option>
+													<option value="VIP厅">VIP厅</option>
+													<option value="3D IMAX">3D IMAX</option>
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="mduration">Movie duration</label>
+												<input type="number" class="form-control" id="mduration"
+													placeholder="影片时长">
+											</div>
+											<div class="form-group">
+												<label for="money">Suggested price</label>
+												<input type="text" class="form-control" id="mmoney" placeholder="建议价格">
+											</div>
+											<div class="form-group">
+												<label for="mcontext">Movie introduction</label>
+												<textarea type="text" aria-owns="4" class="form-control" id="mcontext"
+													placeholder="影片简介"></textarea>
+											</div>
+											<button onclick="addMovie()"
+												class="btn btn-primary mt-4 pr-4 pl-4 addbutton">添加</button>
+										</div>
+									</div>
+								</div>
+								<!-- basic form end -->
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<footer>
+				<div class="footer-area">
+					<div style="width: 80%;">
+						Copyright &copy; 2022.i universe company name all rights reserved
+					</div>
+				</div>
+			</footer>
+			<!-- footer area end-->
+		</div>
+		<!-- page container area end -->
+		<!-- jquery latest version -->
+		<script src="assets/js/vendor/jquery-2.2.4.min.js"></script>
+		<!-- bootstrap 4 js -->
+		<script src="assets/js/popper.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/owl.carousel.min.js"></script>
+		<script src="assets/js/metisMenu.min.js"></script>
+		<script src="assets/js/jquery.slimscroll.min.js"></script>
+		<script src="assets/js/jquery.slicknav.min.js"></script>
+
+		<!-- others plugins -->
+		<script src="assets/js/plugins.js"></script>
+		<script src="assets/js/scripts.js"></script>
+		
+	</body>
+
+</html>
